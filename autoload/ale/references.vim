@@ -57,7 +57,7 @@ function! ale#references#HandleTSServerResponse(conn_id, response) abort
                 if get(l:options, 'open_in') is# 'quickfix'
                     call setqflist([], 'r')
                     call setqflist(l:item_list, 'a')
-                    call ale#util#Execute('cc 1')
+                    call ale#util#Execute('copen')
                 else
                     call ale#preview#ShowSelection(l:item_list, l:options)
                 endif
@@ -105,7 +105,7 @@ function! ale#references#HandleLSPResponse(conn_id, response) abort
             if get(l:options, 'open_in') is# 'quickfix'
                 call setqflist([], 'r')
                 call setqflist(l:item_list, 'a')
-                call ale#util#Execute('cc 1')
+                call ale#util#Execute('copen')
             else
                 call ale#preview#ShowSelection(l:item_list, l:options)
             endif
@@ -122,7 +122,7 @@ function! s:OnReady(line, column, options, linter, lsp_details) abort
 
     let l:buffer = a:lsp_details.buffer
 
-    let l:Callback = a:linter.lsp is# 'tsserver'
+    let l:Callback = (a:linter.lsp is# 'tsserver')
     \   ? function('ale#references#HandleTSServerResponse')
     \   : function('ale#references#HandleLSPResponse')
 
