@@ -67,17 +67,23 @@ function! ale#references#HandleTSServerResponse(conn_id, response) abort
 endfunction
 
 function! ale#references#FormatLSPResponseItem(response_item, options) abort
+
+    let l:lines = readfile(ale#util#ToResource(a:response_item.uri))
+    let l:match = a:response_item.range.start.line < len(l:lines) ? l:lines[a:response_item.range.start.line] : ''
+
     if get(a:options, 'open_in') is# 'quickfix'
         return {
         \ 'filename': ale#util#ToResource(a:response_item.uri),
         \ 'lnum': a:response_item.range.start.line + 1,
         \ 'col': a:response_item.range.start.character + 1,
+        \ 'text': l:match,
         \}
     else
         return {
         \ 'filename': ale#util#ToResource(a:response_item.uri),
         \ 'line': a:response_item.range.start.line + 1,
         \ 'column': a:response_item.range.start.character + 1,
+        \ 'match': l:match,
         \}
     endif
 endfunction
